@@ -1,0 +1,32 @@
+version: "2"
+
+services:
+  master:
+    image: singularities/spark
+    command: start-spark master
+    hostname: master
+    ports:
+      - "6066:6066"
+      - "7070:7070"
+      - "8084:8080"
+      - "50071:50070"
+    networks:
+      extnetwork:
+        ipv4_address: 192.168.80.102
+  worker:
+    image: singularities/spark
+    command: start-spark worker master
+    environment:
+      SPARK_WORKER_CORES: 1
+      SPARK_WORKER_MEMORY: 2g
+    networks:
+      extnetwork:      
+        ipv4_address: 192.168.80.103
+    links:
+      - master
+networks:
+  extnetwork:
+    ipam:
+      config:
+      - subnet: 192.168.80.0/24
+        gateway: 192.168.80.1
